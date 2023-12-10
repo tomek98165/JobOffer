@@ -1,16 +1,21 @@
 package com.joboffers.infrastructure.offer.client;
 
 import com.joboffers.domain.offer.OfferFetchRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
 
 @Configuration
+@AllArgsConstructor
 public class OfferFetcherRepositoryConfiguration {
+
+    public final OfferFetcherRepositoryConfigurationProperties properties;
+
+
 
     @Bean
     public RestTemplateResponseErrorHandler restTemplateResponseErrorHandler(){
@@ -19,20 +24,16 @@ public class OfferFetcherRepositoryConfiguration {
 
 
     @Bean
-    public RestTemplate restTemplate(@Value("${offer.http.client.config.connectionTimeout}") long connectionTimeout,
-                                     @Value("${offer.http.client.config.readTimeout}") long readTimeout,
-                                     RestTemplateResponseErrorHandler restTemplateResponseErrorHandler){
+    public RestTemplate restTemplate(RestTemplateResponseErrorHandler restTemplateResponseErrorHandler){
         return new RestTemplateBuilder()
                 .errorHandler(restTemplateResponseErrorHandler)
-                .setConnectTimeout(Duration.ofMillis(connectionTimeout))
-                .setReadTimeout(Duration.ofMillis(readTimeout))
+                .setConnectTimeout(Duration.ofMillis(properties.connectionTimeout()))
+                .setReadTimeout(Duration.ofMillis(properties.readTimeout()))
                 .build();
     }
 
     @Bean
-    public OfferFetchRepository remoteOfferClient(RestTemplate restTemplate,
-                                                  @Value("${offer.http.client.config.uri:http://example.com}") String uri,
-                                                  @Value("${offer.http.client.config.port:5057}") int port) {
-        return new OfferFetchRepositoryImpl(restTemplate, uri, port);
+    public OfferFetchRepository remoteOfferClient(RestTemplate restTemplate) {
+        return new OfferFetchRepositoryImpl(restTemplate, properties.uri(), properties.port());
     }
 }

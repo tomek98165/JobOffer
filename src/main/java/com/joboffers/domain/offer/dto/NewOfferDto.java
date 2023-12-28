@@ -1,7 +1,11 @@
 package com.joboffers.domain.offer.dto;
 
-public record NewOfferDto(String url,
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record NewOfferDto(
+                          @JsonProperty("OfferUrl") String url,
                           String company,
-                          String position,
-                          String salary) {
+                          @JsonProperty("title")   String position,
+                          String salary
+) {
 }

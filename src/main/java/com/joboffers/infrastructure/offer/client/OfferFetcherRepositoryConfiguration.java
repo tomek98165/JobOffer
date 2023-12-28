@@ -15,8 +15,6 @@ public class OfferFetcherRepositoryConfiguration {
 
     public final OfferFetcherRepositoryConfigurationProperties properties;
 
-
-
     @Bean
     public RestTemplateResponseErrorHandler restTemplateResponseErrorHandler(){
         return new RestTemplateResponseErrorHandler();

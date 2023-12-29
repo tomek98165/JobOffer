@@ -26,7 +26,7 @@ public class OfferFetchRepositoryImpl implements OfferFetchRepository {
     public List<NewOfferDto> fetchAllOffers() {
         log.info("Started fetching offers from http");
         HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
 
         try {

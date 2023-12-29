@@ -57,7 +57,6 @@ public class OfferFacade {
 
     public List<OfferDto> fetchAllOffersAndSaveIfDontExist(){
             List<NewOfferDto> offersFromHttp = offerFetchRepository.fetchAllOffers();
-
             List<Offer> savedOffers = offerRepository.saveAll(
                     offersFromHttp.stream()
                             .map(newOfferDto -> Offer.builder()
@@ -69,19 +68,17 @@ public class OfferFacade {
                             )
                             .toList()
             );
-
-        return savedOffers.stream()
+//            return savedOffers.stream()
+            return offersFromHttp.stream()
                 .map(offer -> OfferDto.builder()
                         .salary(offer.salary())
                         .position(offer.position())
                         .company(offer.company())
                         .url(offer.url())
-                        .id(offer.id())
+                        //.id(offer.id())
                         .build())
                 .toList();
     }
-
-
 
 
 }

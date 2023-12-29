@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties({OfferFetcherRepositoryConfigurationProperties.class})
+
 public class JobOffersSpringBootApplication {
 
     public static void main(String[] args) {

@@ -6,6 +6,9 @@ spring:
 
 offer:
   http:
+    scheduler:
+      delay: PT3H
+      enabled: true
     client:
       config:
         uri: http://ec2-3-120-147-150.eu-central-1.compute.amazonaws.com
@@ -13,3 +16,8 @@ offer:
         connectionTimeout: 1000
         readTimeout: 1000
 
+http:
+  offers:
+    scheduler:
+      request:
+        delay: PT1s

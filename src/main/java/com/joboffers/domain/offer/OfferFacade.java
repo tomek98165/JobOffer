@@ -4,9 +4,7 @@ import com.joboffers.domain.offer.dto.NewOfferDto;
 import com.joboffers.domain.offer.dto.OfferDto;
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class OfferFacade {

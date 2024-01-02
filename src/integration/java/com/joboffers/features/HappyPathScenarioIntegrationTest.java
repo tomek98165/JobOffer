@@ -20,7 +20,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         wireMockServer.stubFor(WireMock.get("/offers")
                 .willReturn(WireMock.aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(bodyWithTwoOffersJson())));
+                .withBody(bodyWithNoOffersJson())));
 
         // when
         offerFetcherScheduler.fetchOffersFromHttp();

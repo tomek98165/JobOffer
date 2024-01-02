@@ -14,7 +14,7 @@ public class OfferFacade {
 
 
     public OfferDto findOfferById(String id){
-        return offerRepository.findOfferById(id)
+        return offerRepository.findById(id)
                 .map(offer -> OfferDto.builder()
                         .id(offer.id())
                         .url(offer.url())
@@ -43,7 +43,7 @@ public class OfferFacade {
     }
 
     public List<OfferDto> findAllOffers(){
-        return offerRepository.findAllOffers()
+        return offerRepository.findAll()
                 .stream()
                 .map(offer -> OfferDto.builder()
                         .salary(offer.salary())
@@ -68,8 +68,8 @@ public class OfferFacade {
                             )
                             .toList()
             );
-//            return savedOffers.stream()
-            return offersFromHttp.stream()
+            return savedOffers.stream()
+//            return offersFromHttp.stream()
                 .map(offer -> OfferDto.builder()
                         .salary(offer.salary())
                         .position(offer.position())

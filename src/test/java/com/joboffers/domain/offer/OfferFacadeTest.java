@@ -4,6 +4,7 @@ import com.joboffers.domain.offer.dto.NewOfferDto;
 import com.joboffers.domain.offer.dto.OfferDto;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ class OfferFacadeTest {
     @Test
     public void should_save_new_offer(){
         OfferDto newOffer = offerFacade.addNewOffer(new NewOfferDto(
-                "url",
+                "offerUrl",
                 "company",
                 "position",
                 "salary"));
@@ -36,7 +37,7 @@ class OfferFacadeTest {
 
         assertThat(newOffer).isEqualTo(OfferDto.builder()
                         .id(newOffer.id())
-                        .url("url")
+                        .offerUrl("offerUrl")
                         .company("company")
                         .position("position")
                         .salary("salary")
@@ -45,7 +46,7 @@ class OfferFacadeTest {
     @Test
     public void should_find_offer_by_id_in_memory(){
         OfferDto newOffer = offerFacade.addNewOffer(new NewOfferDto(
-                "url",
+                "offerUrl",
                 "company",
                 "position",
                 "salary"));
@@ -54,7 +55,7 @@ class OfferFacadeTest {
 
         assertThat(foundOffer).isEqualTo(OfferDto.builder()
                 .id(newOffer.id())
-                .url("url")
+                .offerUrl("offerUrl")
                 .company("company")
                 .position("position")
                 .salary("salary")
@@ -73,20 +74,20 @@ class OfferFacadeTest {
     public void should_throw_exception_when_offer_url_already_exist(){
 
         offerFacade.addNewOffer(new NewOfferDto(
-                "url",
+                "offerUrl",
                 "company",
                 "position",
                 "salary"));
 
         Throwable thrown = catchThrowable(() -> offerFacade.addNewOffer(new NewOfferDto(
-                "url",
+                "offerUrl",
                 "company",
                 "position",
                 "salary")));
 
         AssertionsForClassTypes.assertThat(thrown)
-                .isInstanceOf(OfferUrlExistException.class)
-                .hasMessage("Offer url: url exist");
+                .isInstanceOf(DuplicateKeyException.class)
+                .hasMessage("Offer offerUrl: offerUrl exist");
 
     }
     @Test
@@ -96,7 +97,7 @@ class OfferFacadeTest {
 
         assertThat(result.stream()
                 .map(offerDto -> new NewOfferDto(
-                        offerDto.url(),
+                        offerDto.offerUrl(),
                         offerDto.company(),
                         offerDto.position(),
                         offerDto.salary()
@@ -129,7 +130,7 @@ class OfferFacadeTest {
 
         assertThat(result2.stream()
                 .map(offerDto -> new NewOfferDto(
-                        offerDto.url(),
+                        offerDto.offerUrl(),
                         offerDto.company(),
                         offerDto.position(),
                         offerDto.salary()

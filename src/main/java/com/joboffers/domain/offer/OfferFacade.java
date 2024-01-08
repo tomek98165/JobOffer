@@ -5,6 +5,7 @@ import com.joboffers.domain.offer.dto.OfferDto;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class OfferFacade {
@@ -17,7 +18,7 @@ public class OfferFacade {
         return offerRepository.findById(id)
                 .map(offer -> OfferDto.builder()
                         .id(offer.id())
-                        .url(offer.url())
+                        .offerUrl(offer.url())
                         .salary(offer.salary())
                         .company(offer.company())
                         .position(offer.position())
@@ -38,7 +39,7 @@ public class OfferFacade {
                 .id(savedOffer.id())
                 .position(savedOffer.position())
                 .company(savedOffer.company())
-                .url(savedOffer.url())
+                .offerUrl(savedOffer.url())
                 .build();
     }
 
@@ -49,7 +50,7 @@ public class OfferFacade {
                         .salary(offer.salary())
                         .position(offer.position())
                         .company(offer.company())
-                        .url(offer.url())
+                        .offerUrl(offer.url())
                         .id(offer.id())
                         .build()
                 ).toList();
@@ -57,8 +58,9 @@ public class OfferFacade {
 
     public List<OfferDto> fetchAllOffersAndSaveIfDontExist(){
             List<NewOfferDto> offersFromHttp = offerFetchRepository.fetchAllOffers();
+            List<NewOfferDto> filteredOffers = filterNotExistingOffers(offersFromHttp);
             List<Offer> savedOffers = offerRepository.saveAll(
-                    offersFromHttp.stream()
+                    filteredOffers.stream()
                             .map(newOfferDto -> Offer.builder()
                                     .url(newOfferDto.url())
                                     .company(newOfferDto.company())
@@ -69,15 +71,21 @@ public class OfferFacade {
                             .toList()
             );
             return savedOffers.stream()
-//            return offersFromHttp.stream()
                 .map(offer -> OfferDto.builder()
                         .salary(offer.salary())
                         .position(offer.position())
                         .company(offer.company())
-                        .url(offer.url())
-                        //.id(offer.id())
+                        .offerUrl(offer.url())
+                        .id(offer.id())
                         .build())
                 .toList();
+    }
+
+    private List<NewOfferDto> filterNotExistingOffers(List<NewOfferDto> jobOffers) {
+        return jobOffers.stream()
+                .filter(offerDto -> !offerDto.url().isEmpty())
+                .filter(offerDto -> !offerRepository.existsOfferByUrl(offerDto.url()))
+                .collect(Collectors.toList());
     }
 
 

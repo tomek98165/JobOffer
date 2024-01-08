@@ -1,6 +1,6 @@
 package com.joboffers;
 
-public interface SampleJonOffersResponse {
+public interface SampleJsonOffersResponse {
 
     default String bodyWithNoOffersJson(){
         return "[]";

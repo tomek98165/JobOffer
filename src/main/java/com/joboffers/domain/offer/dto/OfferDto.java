@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record OfferDto(String id,
-                       String url,
+                       String offerUrl,
                        String position,
                        String company,
                        String salary) {

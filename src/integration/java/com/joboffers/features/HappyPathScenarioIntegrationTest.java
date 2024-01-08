@@ -3,7 +3,7 @@ package com.joboffers.features;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.joboffers.BaseIntegrationTest;
-import com.joboffers.SampleJonOffersResponse;
+import com.joboffers.SampleJsonOffersResponse;
 import com.joboffers.domain.offer.dto.OfferDto;
 import com.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 import org.junit.jupiter.api.Test;
@@ -15,11 +15,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implements SampleJonOffersResponse {
+public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implements SampleJsonOffersResponse {
 
 
     @Autowired
@@ -63,7 +65,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
 
 
-        // step 11: user made GET /offers/9999 and system returned NOT_FOUND(404) with message “Offer with id 9999 not found”
+        // step 11: user made GET /offers/9999 and system returned NOT_FOUND(404) with message “Offer not found”
         // given & when
         ResultActions performGetIdNotFound = mockMvc.perform(get("/offers/9999")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -72,10 +74,10 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         performGetIdNotFound.andExpect(status().isNotFound())
                 .andExpect(content().json("""
                                     {
-                                    "message": "Offer with id 9999 not found",
+                                    "message": "Offer not found",
                                     "status": "NOT_FOUND"
                                     }
-                                    """
+                                    """.trim()
                         )
                 );
 
@@ -84,5 +86,50 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 13: there are 2 new offers in external HTTP server
         // step 14: scheduler ran 3rd time and made GET to external server and system added 2 new offers with ids: 3000 and 4000 to database
         // step 15: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 4 offers with ids: 1000,2000, 3000 and 4000
+
+
+        // step 16: user made POST /offers with header "Authorization: Bearer AAAA.BBBB.CCC" and offer as body and system returned CREATED(201) with saved offer
+        // given & when
+        ResultActions performPostAddNewOffer = mockMvc.perform(post("/offers")
+                .content("""
+                        {
+                        "offerUrl": "test.com",
+                        "title":"Junior Java Developer",
+                        "salary":"10k-15k",
+                        "company":"test"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        String createdOfferJson = performPostAddNewOffer.andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        OfferDto parsedCreatedOfferJson = objectMapper.readValue(createdOfferJson, OfferDto.class);
+        assertAll(
+                ()->assertThat(parsedCreatedOfferJson.id()).isNotEmpty(),
+                ()->assertThat(parsedCreatedOfferJson.offerUrl()).isEqualTo("test.com"),
+                ()->assertThat(parsedCreatedOfferJson.company()).isEqualTo("test"),
+                ()->assertThat(parsedCreatedOfferJson.salary()).isEqualTo("10k-15k"),
+                ()->assertThat(parsedCreatedOfferJson.position()).isEqualTo("Junior Java Developer")
+        );
+
+
+        // step 17: user made GET /offers with header "Authorization: Bearer AAAA.BBBB.CCC" and system returned OK(200) with 1 offer
+        ResultActions performfindAllOffers = mockMvc.perform(get("/offers")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        String oneOffersJson = performfindAllOffers.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<OfferDto> parsedOneOffer = objectMapper.readValue(oneOffersJson, new TypeReference<>(){});
+
+        assertThat(parsedOneOffer).hasSize(1);
     }
 }

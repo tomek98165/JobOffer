@@ -18,11 +18,11 @@ public class OfferFetcherScheduler {
 
 
     @Scheduled(fixedDelayString = "${offer.http.scheduler.delay}")
-    public void fetchOffersFromHttp(){
+    public List<OfferDto> fetchOffersFromHttp(){
         log.info("Starting fetching offers");
         List<OfferDto> fetchedOffers = offerFacade.fetchAllOffersAndSaveIfDontExist();
         log.info("Saved {} new Offers", fetchedOffers.size());
-
+        return fetchedOffers;
     }
 
 

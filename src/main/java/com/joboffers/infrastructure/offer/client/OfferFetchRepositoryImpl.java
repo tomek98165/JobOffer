@@ -8,6 +8,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
@@ -42,7 +43,7 @@ public class OfferFetchRepositoryImpl implements OfferFetchRepository {
             final List<NewOfferDto> body = response.getBody();
             if (body == null) {
                 log.info("Server http is empty");
-                return Collections.emptyList();
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT);
             }
             else {
                 log.info("Success response body returned: " + body);
@@ -52,11 +53,12 @@ public class OfferFetchRepositoryImpl implements OfferFetchRepository {
         }
         catch(ResourceAccessException e){
             log.error("ERROR while fetching " + e.getMessage());
-            return Collections.emptyList();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private String getUrlForService(String service) {
         return uri + ":" + port + service;
     }
+
 }

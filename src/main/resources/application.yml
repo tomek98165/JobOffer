@@ -6,7 +6,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
-
+  main:
+    allow-bean-definition-overriding: true
 offer:
   http:
     scheduler:
@@ -24,3 +25,5 @@ http:
     scheduler:
       request:
         delay: PT1s
+
+

@@ -6,6 +6,7 @@ import com.joboffers.infrastructure.offer.client.OfferFetcherRepositoryConfigura
 import com.joboffers.infrastructure.offer.client.OfferFetcherRepositoryConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+
 @Configuration
 public class OffersRestTemplateTestConfig extends OfferFetcherRepositoryConfiguration {
 
@@ -14,8 +15,8 @@ public class OffersRestTemplateTestConfig extends OfferFetcherRepositoryConfigur
         super(properties);
     }
 
-    public OfferFetchRepository remoteOfferClient() {
-        RestTemplate restTemplate = new RestTemplate();
+    public OfferFetchRepository remoteOfferTestClient() {
+        final RestTemplate restTemplate = restTemplate(restTemplateResponseErrorHandler());
         return new OfferFetchRepositoryImpl(restTemplate, properties.uri(), properties.port());
     }
 

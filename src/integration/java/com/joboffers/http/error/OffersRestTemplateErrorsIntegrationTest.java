@@ -47,7 +47,6 @@ public class OffersRestTemplateErrorsIntegrationTest implements SampleJsonOffers
         // then
         assertThat(throwable).isInstanceOf(ResponseStatusException.class);
         assertThat(throwable.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR");
-
     }
     @Test
     void should_throw_500_when_fault_empty_response(){
@@ -92,7 +91,7 @@ public class OffersRestTemplateErrorsIntegrationTest implements SampleJsonOffers
                         .withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 
         // when
-        Throwable throwable = catchThrowable(()->offerFetchRepository.fetchAllOffers());
+        Throwable throwable = catchThrowable(() -> offerFetchRepository.fetchAllOffers());
 
         // then
         assertThat(throwable).isInstanceOf(ResponseStatusException.class);

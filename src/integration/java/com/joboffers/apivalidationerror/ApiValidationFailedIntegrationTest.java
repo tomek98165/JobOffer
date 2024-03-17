@@ -4,6 +4,7 @@ import com.joboffers.BaseIntegrationTest;
 import com.joboffers.infrastructure.apivalidation.ApiValidateErrorDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
 
     @Test
+    @WithMockUser()
     public void should_return_400_bad_request_and_validation_message_when_all_is_null_in_offer_save_request()throws Exception{
 
         // given & then

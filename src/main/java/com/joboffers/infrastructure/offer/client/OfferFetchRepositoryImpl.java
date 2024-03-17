@@ -11,8 +11,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
 import java.util.List;
+
+
 
 
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class OfferFetchRepositoryImpl implements OfferFetchRepository {
     public List<NewOfferDto> fetchAllOffers() {
         log.info("Started fetching offers from http");
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setContentType(MediaType.APPLICATION_JSON);
         final HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
 
         try {
@@ -53,6 +54,10 @@ public class OfferFetchRepositoryImpl implements OfferFetchRepository {
         }
         catch(ResourceAccessException e){
             log.error("ERROR while fetching " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(IllegalArgumentException e){
+            log.error("ERROR while fetching 2 " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

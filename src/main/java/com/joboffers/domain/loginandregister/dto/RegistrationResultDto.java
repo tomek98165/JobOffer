@@ -1,4 +1,4 @@
-package com.joboffers.domain.login.dto;
+package com.joboffers.domain.loginandregister.dto;
 
 public record RegistrationResultDto(String id,
                                     boolean status,

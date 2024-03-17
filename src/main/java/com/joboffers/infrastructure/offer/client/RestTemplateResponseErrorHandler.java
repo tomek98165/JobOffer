@@ -1,6 +1,8 @@
 package com.joboffers.infrastructure.offer.client;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus.Series;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,11 +14,11 @@ import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 
 public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandler {
 
-
     @Override
     public void handleError(ClientHttpResponse httpResponse) throws IOException {
-        final HttpStatus statusCode = (HttpStatus) httpResponse.getStatusCode();
-        final HttpStatus.Series series = statusCode.series();
+        final HttpStatusCode statusCode = httpResponse.getStatusCode();
+        final HttpStatus getCode = HttpStatus.valueOf(statusCode.value());
+        final Series series = getCode.series();
         if (series == SERVER_ERROR) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while using http client");
         } else if (series == CLIENT_ERROR) {

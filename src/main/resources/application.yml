@@ -27,3 +27,8 @@ http:
         delay: PT1s
 
 
+auth:
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: job-offers-backend
+    expiration-days: 30

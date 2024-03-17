@@ -3,6 +3,7 @@ package com.joboffers.controller.error;
 import com.joboffers.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,6 +25,7 @@ public class OfferUrlDuplicationErrorTest extends BaseIntegrationTest {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
     @Test
+    @WithMockUser()
     public void should_return_409_conflict_when_url_exist() throws Exception{
         // given & then
         mockMvc.perform(post("/offers")

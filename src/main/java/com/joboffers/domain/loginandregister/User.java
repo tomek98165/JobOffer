@@ -1,4 +1,4 @@
-package com.joboffers.domain.login;
+package com.joboffers.domain.loginandregister;
 
 import lombok.Builder;
 import org.springframework.data.mongodb.core.index.Indexed;

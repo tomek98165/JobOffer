@@ -59,7 +59,6 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
 
         // step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
         // given & when
-
         ResultActions failedLoginRequest = mockMvc.perform(post("/token")
                 .content("""
                         {
@@ -81,9 +80,43 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
 
 
         // step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
-        // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
-        // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
+        // given && when
+        ResultActions failedGetOfferRequest = mockMvc.perform(get("/offers")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        // then
+        failedGetOfferRequest.andExpect(status().isForbidden());
 
+
+        // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
+        // given && when
+        ResultActions userRegister = mockMvc.perform(post("/register")
+                .content("""
+                        {
+                        "username":"someUser",
+                        "password":"somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        userRegister.andExpect(status().isCreated());
+
+
+
+        // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
+        // given & when
+        ResultActions loginRequest = mockMvc.perform(post("/token")
+                .content("""
+                        {
+                        "username":"someUser",
+                        "password":"somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        loginRequest.andExpect(status().isOk());
 
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given & when

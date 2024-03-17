@@ -1,4 +1,4 @@
-package com.joboffers.infrastructure.token.controller.error;
+package com.joboffers.infrastructure.loginandregister.controller.error;
 
 import org.springframework.http.HttpStatus;
 

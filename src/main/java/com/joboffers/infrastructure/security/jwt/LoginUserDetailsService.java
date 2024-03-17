@@ -1,7 +1,7 @@
 package com.joboffers.infrastructure.security.jwt;
 
-import com.joboffers.domain.login.LoginAndRegisterFacade;
-import com.joboffers.domain.login.dto.UserDto;
+import com.joboffers.domain.loginandregister.LoginAndRegisterFacade;
+import com.joboffers.domain.loginandregister.dto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;

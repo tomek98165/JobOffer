@@ -1,4 +1,4 @@
-package com.joboffers.infrastructure.token.controller.dto;
+package com.joboffers.infrastructure.loginandregister.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

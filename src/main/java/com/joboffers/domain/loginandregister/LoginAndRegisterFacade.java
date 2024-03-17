@@ -1,8 +1,8 @@
-package com.joboffers.domain.login;
+package com.joboffers.domain.loginandregister;
 
-import com.joboffers.domain.login.dto.RegisterUserDto;
-import com.joboffers.domain.login.dto.RegistrationResultDto;
-import com.joboffers.domain.login.dto.UserDto;
+import com.joboffers.domain.loginandregister.dto.RegisterUserDto;
+import com.joboffers.domain.loginandregister.dto.RegistrationResultDto;
+import com.joboffers.domain.loginandregister.dto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;

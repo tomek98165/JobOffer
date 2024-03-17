@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.joboffers.BaseIntegrationTest;
 import com.joboffers.SampleJsonOffersResponse;
 import com.joboffers.domain.offer.dto.OfferDto;
+import com.joboffers.infrastructure.loginandregister.controller.dto.JwtResponseDto;
 import com.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -116,12 +118,22 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         // then
-        loginRequest.andExpect(status().isOk());
+        MvcResult successLoginRequest = loginRequest.andExpect(status().isOk()).andReturn();
+
+        String json = successLoginRequest.getResponse().getContentAsString();
+        JwtResponseDto jwtResponse = objectMapper.readValue(json, JwtResponseDto.class);
+        String token = jwtResponse.token();
+        assertAll(
+                () -> assertThat(jwtResponse.username()).isEqualTo("someUser"),
+                () -> assertThat(token).matches(Pattern.compile("^([A-Za-z0-9-_=]+\\.)+([A-Za-z0-9-_=])+\\.?$"))
+        );
+
 
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given & when
         ResultActions perform = mockMvc.perform(get("/offers")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         // then
         MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
@@ -149,6 +161,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
         // given & when
         ResultActions performTwoOffers = mockMvc.perform(get("/offers")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         // then
@@ -162,6 +175,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 11: user made GET /offers/9999 and system returned NOT_FOUND(404) with message “Offer not found”
         // given & when
         ResultActions performGetIdNotFound = mockMvc.perform(get("/offers/9999")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
@@ -181,6 +195,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         String idOfferFromDb = twoOffers.get(0).id();
 
         ResultActions performGetIdFound = mockMvc.perform(get("/offers/" + idOfferFromDb)
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         // then
@@ -203,6 +218,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 15: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 4 offers with ids: 1000,2000, 3000 and 4000
         // given
         ResultActions performGetFourOffers = mockMvc.perform(get("/offers")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         // when
@@ -216,6 +232,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
         // step 16: user made POST /offers with header "Authorization: Bearer AAAA.BBBB.CCC" and offer as body and system returned CREATED(201) with saved offer
         // given & when
         ResultActions performPostAddNewOffer = mockMvc.perform(post("/offers")
+                .header("Authorization", "Bearer " + token)
                 .content("""
                         {
                         "offerUrl": "test.com",
@@ -245,6 +262,7 @@ public class HappyPathScenarioIntegrationTest extends BaseIntegrationTest implem
 
         // step 17: user made GET /offers with header "Authorization: Bearer AAAA.BBBB.CCC" and system returned OK(200) with 5 offer
         ResultActions performFindAllOffers = mockMvc.perform(get("/offers")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
